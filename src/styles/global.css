@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+/* ─── Hasanat Brand Theme ─── */
+@theme {
+  --color-hasanat: #0f766e;
+  --color-hasanat-light: #14b8a6;
+  --color-hasanat-dark: #0d5c56;
+  --color-surface: #f8fafb;
+  --color-surface-dark: #0f172a;
+  --font-sans: "Inter", "Noto Sans Arabic", system-ui, sans-serif;
+}
+
+/* ─── Base ─── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-surface text-slate-800 font-sans;
+  }
+  [dir="rtl"] {
+    font-feature-settings: "ss01";
+  }
+}
+
+/* ─── Components ─── */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+      bg-hasanat text-white font-medium rounded-xl
+      hover:bg-hasanat-dark transition-colors duration-150
+      focus:outline-none focus:ring-2 focus:ring-hasanat/50 focus:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+      border border-slate-200 text-slate-700 font-medium rounded-xl
+      hover:bg-slate-50 transition-colors duration-150
+      focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "hasanat-starter",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Build apps that serve the Ummah — Astro starter for hasanat.dev",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "biome check src",
+    "lint:fix": "biome check src --write",
+    "format": "biome format --write .",
+    "check": "astro check && tsc --noEmit",
+    "db:migrate:local": "wrangler d1 execute YOUR_DB_NAME --local --file=schema.sql",
+    "db:migrate:prod": "wrangler d1 execute YOUR_DB_NAME --remote --file=schema.sql"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/cloudflare": "^12.0.0",
+    "@astrojs/react": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.1.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.474.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss": "^4.1.18",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.13",
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.0.0"
+  },
+  "license": "MIT"
+}

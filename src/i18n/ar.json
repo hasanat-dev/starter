@@ -1,0 +1,18 @@
+{
+  "site.name": "تطبيقي",
+  "site.description": "تطبيق يخدم الأمة",
+  "nav.home": "الرئيسية",
+  "nav.about": "عن التطبيق",
+  "nav.signin": "تسجيل الدخول",
+  "nav.signout": "تسجيل الخروج",
+  "hero.title": "مرحباً بك في تطبيقي",
+  "hero.subtitle": "تطبيق يخدم الأمة — مستضاف على حسنات",
+  "hero.cta": "ابدأ الآن",
+  "footer.built_with": "بُني بـ",
+  "footer.hosted_on": "مستضاف على",
+  "common.loading": "جاري التحميل...",
+  "common.error": "حدث خطأ",
+  "common.save": "حفظ",
+  "common.cancel": "إلغاء",
+  "common.back": "رجوع"
+}

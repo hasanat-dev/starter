@@ -1,0 +1,32 @@
+---
+import "@/styles/global.css";
+import { getLangFromUrl, getDirection, useTranslations } from "@/i18n/utils";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = getLangFromUrl(Astro.url);
+const dir = getDirection(locale);
+const t = useTranslations(locale);
+
+const { title = t("site.name"), description = t("site.description") } = Astro.props;
+const siteName = t("site.name");
+---
+
+<!doctype html>
+<html lang={locale} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — {siteName}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0f766e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <slot />
+  </body>
+</html>

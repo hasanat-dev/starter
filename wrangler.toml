@@ -1,0 +1,25 @@
+# ─────────────────────────────────────────────────────────────
+# Hasanat App — Cloudflare Pages Configuration
+# ─────────────────────────────────────────────────────────────
+
+name = "your-app-name"
+compatibility_date = "2025-12-01"
+pages_build_output_dir = "./dist"
+
+# ─────────────────────────────────────────────────────────────
+# D1 Database
+# Create with: npx wrangler d1 create your-app-db
+# Then update the database_id below
+# ─────────────────────────────────────────────────────────────
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "your-app-db"
+# database_id = "<your-database-id>"
+
+# ─────────────────────────────────────────────────────────────
+# Environment Variables
+# For secrets: npx wrangler pages secret put SECRET_NAME
+# ─────────────────────────────────────────────────────────────
+# [vars]
+# PUBLIC_SITE_URL = "https://yourapp.hasanat.dev"
+# PUBLIC_APP_NAME = "Your App Name"
