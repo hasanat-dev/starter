@@ -39,17 +39,16 @@ npx wrangler d1 create your-app-db
 npm run db:migrate:local
 ```
 
-### 4. Submit your app
+### 4. Request a subdomain and a listing
 
-When ready, submit at **[hasanat.dev/apps/submit](https://hasanat.dev/apps/submit)**.
-You'll get a subdomain and listing.
+When it is ready for users, request what you need from the builder dashboard at **[platform.hasanat.dev/dashboard](https://platform.hasanat.dev/dashboard)**: a `yourapp.hasanat.dev` subdomain, a database, or a listing of your project on hasanat.dev. Guides for every step are on [platform.hasanat.dev](https://platform.hasanat.dev).
 
 ## How It Works
 
 1. **You build** — Use this template or bring your own web app
-2. **You submit** — Fill the form at hasanat.dev/apps/submit
-3. **We review** — Quick review by the Hasanat team
-4. **You're live** — Your app goes live at yourapp.hasanat.dev
+2. **You request** — Ask for a subdomain, database or listing in the [builder dashboard](https://platform.hasanat.dev/dashboard)
+3. **A maintainer sets it up** — Hasanat's maintainers handle requests from a written runbook
+4. **You're live** — Your app runs at yourapp.hasanat.dev, and your project can take offers of help on [hasanat.dev](https://hasanat.dev)
 
 ## Stack
 
@@ -90,7 +89,7 @@ const items = await queryAll(db, "SELECT * FROM items WHERE status = ?", "active
 
 ## Hosting Elsewhere?
 
-Not on Cloudflare? No problem. Submit your app at [hasanat.dev/apps/submit](https://hasanat.dev/apps/submit) with your URL. You can still get a hasanat.dev subdomain and use auth.hasanat.dev via OAuth.
+Not on Cloudflare? Request a listing or a subdomain from the [builder dashboard](https://platform.hasanat.dev/dashboard) with your URL. Shared sign-in works through the `.hasanat.dev` cookie, so it needs your app on a `*.hasanat.dev` subdomain; there is no OAuth flow for other domains yet, so request sign-in support from the dashboard if you need it.
 
 ## Project Structure
 

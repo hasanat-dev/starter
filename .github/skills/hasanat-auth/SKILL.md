@@ -1,30 +1,68 @@
+---
+name: hasanat-auth
+description: "Add shared Hasanat sign-in (auth.hasanat.dev, Google and GitHub) to an app served on a *.hasanat.dev subdomain. Use when reading the signed-in user, protecting pages or API routes, adding sign-in and sign-out links, or deciding how an app outside *.hasanat.dev can get Hasanat sign-in."
+---
+
 # Hasanat Auth Skill
 
 ## Overview
 
-This skill covers authentication integration with auth.hasanat.dev for apps in the Hasanat ecosystem.
+This skill covers sign-in with auth.hasanat.dev, the shared authentication service for apps served on `*.hasanat.dev`. Users sign in with Google or GitHub.
+
+Builder guide: https://platform.hasanat.dev/services/sign-in/
 
 ## Architecture
 
-auth.hasanat.dev is a shared authentication service for all `*.hasanat.dev` apps.
+auth.hasanat.dev runs Auth.js with JWT sessions.
 
-**For Cloudflare-hosted apps** (first-party):
-- Auth uses a shared cookie (`authjs.session-token`) scoped to `.hasanat.dev`
-- The middleware in `src/middleware.ts` reads this cookie and verifies the JWT
-- No additional auth setup needed — it works out of the box
+- After sign-in it sets the session cookie `authjs.session-token` on the `.hasanat.dev` domain (httpOnly, Secure, SameSite=Lax). Browsers send it to every `https://*.hasanat.dev` site.
+- The cookie is encrypted with a secret that only the auth service holds. Apps never decode it. They ask the auth service instead: `GET https://auth.hasanat.dev/api/auth/session` with the incoming `cookie` header. The response is the session JSON, or `null` when nobody is signed in.
+- Sign-in page: `https://auth.hasanat.dev/api/auth/signin?callbackUrl=<url-encoded return URL>`. Return URLs are accepted for `https://hasanat.dev`, single-level subdomains such as `https://name.hasanat.dev`, and `http://localhost`. Any other return URL sends the user to auth.hasanat.dev instead.
+- Sign-out: `https://auth.hasanat.dev/api/auth/signout`.
+- Users manage their profile and connected accounts at `https://auth.hasanat.dev/account`.
 
-**For externally-hosted apps** (third-party):
-- Auth uses OAuth 2.0 Authorization Code flow
-- Register your app to get a client_id
-- Redirect users to `auth.hasanat.dev/oauth/authorize`
-- Exchange the code for a token at `auth.hasanat.dev/oauth/token`
+**Apps outside `*.hasanat.dev`:** there is no OAuth flow for external apps. `auth.hasanat.dev/oauth/authorize` and `/oauth/token` do not exist, and no client IDs or client secrets are issued. To use Hasanat sign-in, serve the app on a `*.hasanat.dev` subdomain, or ask for sign-in support from the platform dashboard at https://platform.hasanat.dev/dashboard. Leave the commented `HASANAT_CLIENT_ID` and `HASANAT_CLIENT_SECRET` lines in the starter's `.env.example` unused.
 
-## Usage — First-Party (Cookie Auth)
+## Session shape
+
+```json
+{
+  "user": {
+    "id": "…",
+    "name": "…",
+    "email": "…",
+    "image": "…",
+    "provider": "google",
+    "githubUsername": null,
+    "role": "user"
+  },
+  "expires": "…"
+}
+```
+
+`role` comes from the auth service's user record and defaults to `"user"`. It is read when the user signs in, so a change applies after the next sign-in. It is not a Hasanat project role such as lead or moderator. Keep your app's own permissions in its own database, keyed by `user.id`.
+
+## Usage in the starter
+
+### How the middleware works
+
+```
+1. A request arrives at your app.
+2. src/middleware.ts checks the session only for paths that start with /api/
+   or contain /dashboard.
+3. If the request carries the authjs.session-token cookie, the middleware
+   forwards the cookie header to /api/auth/session on the auth service.
+4. If the response has a user, it is stored in Astro.locals.user.
+   Otherwise Astro.locals.user is null.
+5. If the auth service is unreachable, the request continues without a user.
+```
+
+Widen `needsAuth` in `src/middleware.ts` if other pages must know the signed-in user. For example, the starter's home page shows a sign-in button even for signed-in users until you do.
 
 ### Accessing the User
 
 ```typescript
-// In any .astro page or API route:
+// In any .astro page or API route covered by the middleware:
 const user = Astro.locals.user;
 
 if (user) {
@@ -32,7 +70,7 @@ if (user) {
   // user.name — display name
   // user.email — email address
   // user.image — profile image URL
-  // user.role — "admin" | "builder" | "user"
+  // user.role — "user" by default; isAdmin() checks for "admin"
 }
 ```
 
@@ -51,8 +89,8 @@ if (redirect) return redirect;
 ```typescript
 import { getSignInUrl, getSignOutUrl } from "@/lib/auth";
 
-const signIn = getSignInUrl(currentUrl);
-const signOut = getSignOutUrl(currentUrl);
+const signIn = getSignInUrl(Astro.url.href);
+const signOut = getSignOutUrl();
 ```
 
 ### Admin Check
@@ -65,30 +103,31 @@ if (isAdmin(Astro.locals.user)) {
 }
 ```
 
-## How the Middleware Works
+### From the browser
 
-```
-1. Request arrives at your app
-2. Middleware reads `authjs.session-token` cookie
-3. JWT is decoded (HS256, shared secret)
-4. User object is attached to Astro.locals.user
-5. If no cookie or invalid JWT → user is null (not signed in)
+Pages served on a `*.hasanat.dev` subdomain can ask for the session from the browser. The auth service allows credentialed requests from `*.hasanat.dev` origins:
+
+```js
+const res = await fetch("https://auth.hasanat.dev/api/auth/session", {
+  credentials: "include",
+});
+const session = await res.json(); // null when signed out
 ```
 
-The shared secret is the `AUTH_SECRET` environment variable, which must match the one used by auth.hasanat.dev.
+## Local development
+
+The session cookie is scoped to `.hasanat.dev`, so it is never sent to `localhost`. In development, the starter's helpers point to `http://localhost:8788`, a local copy of the auth service. Its repository is private and most builders do not run it. Locally, `Astro.locals.user` stays `null` and sign-in links do not complete. Keep public pages working without a user, and test sign-in on a deployed `*.hasanat.dev` subdomain.
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `AUTH_SECRET` | Yes (production) | JWT signing secret — must match auth.hasanat.dev |
-
-For local development, auth is mocked — no AUTH_SECRET needed.
+None. Shared sign-in needs no secrets in your app. Never ask for, copy, or set the auth service's `AUTH_SECRET` in an app.
 
 ## Important Notes
 
-- Never store auth tokens or passwords in your app
-- Always use `Astro.locals.user` — don't parse the cookie yourself
-- The cookie is httpOnly, secure, SameSite=lax — JavaScript cannot access it
-- Auth sessions expire according to auth.hasanat.dev configuration
-- Do NOT add Firebase Auth, Clerk, or any other auth provider
+- Never store passwords, auth tokens, or the session cookie in your app.
+- Use `Astro.locals.user` or the session endpoint. Do not try to decode the cookie yourself.
+- The cookie is httpOnly, Secure, SameSite=Lax. Page JavaScript cannot read it.
+- Idle sessions expire after 30 days, the Auth.js default. Each session check extends them.
+- The sign-in page is in English today.
+- Follow the starter's `DATA_POLICY.md`. Your app receives the user's ID, name, email, and image.
+- Do NOT add Firebase Auth, Clerk, or any other auth provider.
