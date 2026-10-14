@@ -6,17 +6,17 @@
 
 1. Use this template (click "Use this template" on GitHub)
 2. Build your app locally (`npm install` → `npm run dev`)
-3. Submit at [hasanat.dev/apps/submit](https://hasanat.dev/apps/submit)
+3. Send a [listing request](https://platform.hasanat.dev/dashboard/requests/new?kind=listing) from «لوحتي» on the build platform
 4. Get your hasanat.dev subdomain
 
 ### 💡 Submit an Idea
 
 Don't code? No problem.
 
-1. Go to [hasanat.dev/ideas/submit](https://hasanat.dev/ideas/submit)
-2. Describe the problem you want solved
-3. AI will help refine your idea
-4. Builders will pick it up
+1. Go to [hasanat.dev/ideas/new](https://hasanat.dev/ideas/new)
+2. Describe the need you see
+3. People vote for the ideas that matter to them
+4. Each month a few of the top ideas get a one-page spec, and a lead from the community takes it on
 
 ### 🎨 Improve Existing Apps
 

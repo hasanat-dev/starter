@@ -41,13 +41,13 @@ npm run db:migrate:local
 
 ### 4. Submit your app
 
-When ready, submit at **[hasanat.dev/apps/submit](https://hasanat.dev/apps/submit)**.
-You'll get a subdomain and listing.
+When ready, send a **[listing request](https://platform.hasanat.dev/dashboard/requests/new?kind=listing)** from «لوحتي» (your dashboard) on the build platform.
+You can ask there for a hasanat.dev subdomain too.
 
 ## How It Works
 
 1. **You build** — Use this template or bring your own web app
-2. **You submit** — Fill the form at hasanat.dev/apps/submit
+2. **You ask** — Send a listing request (and a subdomain request, if you need one) from «لوحتي» on platform.hasanat.dev
 3. **We review** — Quick review by the Hasanat team
 4. **You're live** — Your app goes live at yourapp.hasanat.dev
 
@@ -90,7 +90,7 @@ const items = await queryAll(db, "SELECT * FROM items WHERE status = ?", "active
 
 ## Hosting Elsewhere?
 
-Not on Cloudflare? No problem. Submit your app at [hasanat.dev/apps/submit](https://hasanat.dev/apps/submit) with your URL. You can still get a hasanat.dev subdomain and use auth.hasanat.dev via OAuth.
+Not on Cloudflare? No problem. Send a [listing request](https://platform.hasanat.dev/dashboard/requests/new?kind=listing) with your URL. You can still get a hasanat.dev subdomain and use auth.hasanat.dev via OAuth.
 
 ## Project Structure
 

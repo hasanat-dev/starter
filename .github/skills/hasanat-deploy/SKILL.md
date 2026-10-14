@@ -43,7 +43,7 @@ npx wrangler pages deploy dist/
 
 After your app is deployed and working:
 
-1. Submit at [hasanat.dev/apps/submit](https://hasanat.dev/apps/submit)
+1. Send a [listing request](https://platform.hasanat.dev/dashboard/requests/new?kind=listing) from «لوحتي» on platform.hasanat.dev (ask for a subdomain there too)
 2. Include your Cloudflare Pages URL
 3. Once approved, you'll get `your-app.hasanat.dev`
 
@@ -94,7 +94,7 @@ jobs:
 If you're not using Cloudflare Pages:
 
 1. Deploy your app to your preferred platform (Vercel, Netlify, VPS, etc.)
-2. Submit at [hasanat.dev/apps/submit](https://hasanat.dev/apps/submit)
+2. Send a [listing request](https://platform.hasanat.dev/dashboard/requests/new?kind=listing) from «لوحتي» on platform.hasanat.dev
 3. Provide your app's URL
 4. You'll get a subdomain that points to your hosting via CNAME
 5. For auth, use OAuth 2.0 flow instead of shared cookie
