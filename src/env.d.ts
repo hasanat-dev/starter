@@ -1,6 +1,7 @@
 /// <reference types="astro/client" />
 
 type D1Database = import("@cloudflare/workers-types").D1Database;
+type D1Result = import("@cloudflare/workers-types").D1Result;
 type KVNamespace = import("@cloudflare/workers-types").KVNamespace;
 
 interface Env {
