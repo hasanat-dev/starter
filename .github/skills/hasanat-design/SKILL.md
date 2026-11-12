@@ -1,17 +1,40 @@
+---
+name: hasanat-design
+description: "Design guidelines for Hasanat apps: brand colours, Arabic typography, RTL layout with logical properties, component patterns, icons, and accessibility. Use when styling pages or components, choosing colours or fonts, or reviewing Arabic and English layouts."
+---
+
 # Hasanat Design Skill
 
 ## Overview
 
 Design guidelines for Hasanat ecosystem apps. Follow these to maintain visual consistency across the platform.
 
-## Brand Colors
+## Hasanat Brand
+
+The Hasanat brand used by hasanat.dev, the project briefs, and platform.hasanat.dev:
+
+| Name | Hex | Usage |
+|------|-----|-------|
+| Emerald | `#047857` | Primary actions, links, active states |
+| Deep emerald | `#064e3b` | Strong text accents, pressed states |
+| Gold | `#b8860b` | Small accents only, never body text |
+| Paper | `#f7f5ee` | Page background |
+| Ink | `#16271d` | Primary text |
+
+The brand typeface is **IBM Plex Sans Arabic** (SIL Open Font License), which also covers Latin text. Self-host it, for example with the `@fontsource/ibm-plex-sans-arabic` package.
+
+Builder guide: https://platform.hasanat.dev/services/design-system/
+
+## Starter Colors
+
+The starter still ships an older teal palette. To match the Hasanat brand, change the `@theme` values in `src/styles/global.css`.
 
 | Name | Hex | Usage |
 |------|-----|-------|
 | Primary | `#0f766e` | Buttons, links, active states |
 | Primary Light | `#14b8a6` | Hover states, accents |
-| Primary Dark | `#0d6e66` | Active/pressed states |
-| Background | `#fafaf9` | Page background |
+| Primary Dark | `#0d5c56` | Active/pressed states |
+| Background | `#f8fafb` | Page background |
 | Surface | `#ffffff` | Cards, panels |
 | Text | `#1c1917` | Primary text |
 | Text Muted | `#78716c` | Secondary text, placeholders |
@@ -23,14 +46,16 @@ In Tailwind v4, these are configured in `src/styles/global.css`:
 @theme {
   --color-hasanat: #0f766e;
   --color-hasanat-light: #14b8a6;
+  --color-hasanat-dark: #0d5c56;
+  --color-surface: #f8fafb;
 }
 ```
 
 ## Typography
 
-- **Arabic**: Noto Sans Arabic (Google Fonts)
-- **English**: Inter (Google Fonts)
-- Both are loaded in `Layout.astro`
+- **Starter**: Noto Sans Arabic and Inter, loaded from Google Fonts at the top of `src/styles/global.css`
+- **Hasanat brand**: IBM Plex Sans Arabic for both Arabic and Latin text
+- Do not add letter spacing to Arabic text; it breaks the joined letterforms
 
 ### Text Sizes
 

@@ -1,8 +1,23 @@
+---
+name: hasanat-d1
+description: "Use Cloudflare D1 (SQLite) as the database of a Hasanat starter app. Use when creating or requesting a database, writing schema.sql or migrations, querying D1 from Astro pages and API routes, or checking D1 limits."
+---
+
 # Hasanat D1 Database Skill
 
 ## Overview
 
 Use Cloudflare D1 (SQLite at the edge) as your app's database. D1 is free-tier friendly and requires zero separate infrastructure.
+
+Builder guide: https://platform.hasanat.dev/services/database/
+
+Ask the user before creating a database or applying migrations to a remote database.
+
+## Your own database or a Hasanat database
+
+- **Hasanat managed hosting (recommended for starter apps):** do not create a database or apply remote migrations. Commit SQL files in `migrations/`, named like `0001_init.sql` with nothing else in that folder, and read the `DB` binding. After approval, the platform creates separate preview and production databases and applies new migrations with each reviewed release. Never edit a migration that a published release applied; add a new file. Guide: https://platform.hasanat.dev/services/managed-hosting/
+- **Your own Cloudflare account:** create the database yourself with the steps below.
+- **The Hasanat Cloudflare account without managed hosting:** request a database from the platform dashboard at https://platform.hasanat.dev/dashboard instead. A maintainer creates it and replies with the database name and ID. These are identifiers, not secrets; never send secrets in a request.
 
 ## Setup
 
@@ -46,6 +61,8 @@ CREATE INDEX IF NOT EXISTS idx_items_created_by ON items(created_by);
 
 ### 4. Apply Migrations
 
+The starter's `db:migrate:*` scripts in `package.json` contain the placeholder `YOUR_DB_NAME`. Replace it with your database name first.
+
 ```bash
 # Local development
 npm run db:migrate:local
@@ -54,7 +71,17 @@ npm run db:migrate:local
 npm run db:migrate:prod
 ```
 
+For versioned schema changes, Wrangler can also manage migration files:
+
+```bash
+npx wrangler d1 migrations create your-app-db add-items
+npx wrangler d1 migrations apply your-app-db --local
+npx wrangler d1 migrations apply your-app-db --remote
+```
+
 ## Using D1 in Code
+
+The starter uses Astro 5, where bindings are read from `locals.runtime.env`. With Astro 6 or later, `Astro.locals.runtime` no longer exists: use `import { env } from "cloudflare:workers"` and `env.DB` instead.
 
 ### Basic Queries
 
@@ -132,9 +159,11 @@ await db.prepare(`SELECT * FROM items WHERE id = ${id}`).all();
 
 ## D1 Limits (Free Tier)
 
+From Cloudflare's documentation; check https://developers.cloudflare.com/d1/platform/limits/ for current values.
+
 - 5M rows read per day
 - 100K rows written per day
-- 5GB storage
+- 5GB storage per account, 500MB per database
 - 10 databases per account
 
 These limits are generous for most Hasanat apps.
