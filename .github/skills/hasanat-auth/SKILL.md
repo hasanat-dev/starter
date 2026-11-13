@@ -50,11 +50,14 @@ auth.hasanat.dev runs Auth.js with JWT sessions.
 1. A request arrives at your app.
 2. src/middleware.ts checks the session only for paths that start with /api/
    or contain /dashboard.
-3. If the request carries the authjs.session-token cookie, the middleware
+3. On a Hasanat preview, src/lib/preview-auth.ts first reads the identity that
+   Cloudflare Access verified (see "Previews" below). Elsewhere it returns null
+   without a network request.
+4. Otherwise, if the request carries the authjs.session-token cookie, the middleware
    forwards the cookie header to /api/auth/session on the auth service.
-4. If the response has a user, it is stored in Astro.locals.user.
+5. If the response has a user, it is stored in Astro.locals.user.
    Otherwise Astro.locals.user is null.
-5. If the auth service is unreachable, the request continues without a user.
+6. If the auth service is unreachable, the request continues without a user.
 ```
 
 Widen `needsAuth` in `src/middleware.ts` if other pages must know the signed-in user. For example, the starter's home page shows a sign-in button even for signed-in users until you do.
@@ -114,9 +117,31 @@ const res = await fetch("https://auth.hasanat.dev/api/auth/session", {
 const session = await res.json(); // null when signed out
 ```
 
+## Previews (managed hosting)
+
+Managed-hosting previews run on `*.pages.dev`, outside `hasanat.dev`, so the session cookie never reaches them and sign-in links do not complete there. Cloudflare Access protects every preview instead: only the project owner and Hasanat administrators get in, after signing in with Google, GitHub or an emailed code. Access then sends the app a signed token in the `Cf-Access-Jwt-Assertion` header.
+
+On previews only, the hosting runner sets `HASANAT_ACCESS_TEAM` and `HASANAT_ACCESS_AUD`. The starter's `src/lib/preview-auth.ts` verifies the token against that team's public keys and that application, then sets `Astro.locals.user` to `{ id: "preview:<email>", name, email }` on the same paths as the session check. Pages that need sign-in work on the preview with the visitor's real email, so email-based roles, such as a supervisors list in a runtime setting, can be tested before publishing. Open those pages directly: the app's sign-in button still points to auth.hasanat.dev.
+
+- Production never gets these values, and the helper accepts no token without a valid signature, so the header cannot be forged.
+- The preview has its own database, so user IDs there differ from production. Key permissions by email, or expect new rows in the preview database.
+- Never trust `Cf-Access-Jwt-Assertion` with your own code. Use the helper.
+
+An app copied from the starter before November 2026 lacks the helper. Copy `src/lib/preview-auth.ts` from https://github.com/hasanat-dev/starter, then in `src/middleware.ts`:
+
+```typescript
+import { previewUser } from "./lib/preview-auth";
+
+// Inside onRequest, after needsAuth is computed and before the cookie check:
+if (needsAuth) {
+  context.locals.user = await previewUser(context.request, context.locals.runtime?.env ?? {});
+}
+// …and run the existing cookie check only when !context.locals.user.
+```
+
 ## Local development
 
-The session cookie is scoped to `.hasanat.dev`, so it is never sent to `localhost`. In development, the starter's helpers point to `http://localhost:8788`, a local copy of the auth service. Its repository is private and most builders do not run it. Locally, `Astro.locals.user` stays `null` and sign-in links do not complete. Keep public pages working without a user, and test sign-in on a deployed `*.hasanat.dev` subdomain.
+The session cookie is scoped to `.hasanat.dev`, so it is never sent to `localhost`. In development, the starter's helpers point to `http://localhost:8788`, a local copy of the auth service. Its repository is private and most builders do not run it. Locally, `Astro.locals.user` stays `null` and sign-in links do not complete. Keep public pages working without a user, and test signed-in pages on a managed-hosting preview or a deployed `*.hasanat.dev` subdomain.
 
 ## Environment Variables
 

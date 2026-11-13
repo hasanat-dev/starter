@@ -77,6 +77,8 @@ import { getSignInUrl } from "@/lib/auth";
 const signInUrl = getSignInUrl(Astro.url.href);
 ```
 
+On a Hasanat managed-hosting preview (`*.pages.dev`, behind Cloudflare Access), the shared cookie never arrives. There, `src/lib/preview-auth.ts` makes the email that Access verified the signed-in user on `/api/` and `/dashboard` pages, so you can test signed-in pages before publishing. Production never uses it.
+
 ## Database
 
 D1 binding available after setup:
@@ -99,6 +101,7 @@ Not on Cloudflare? No problem. Send a [listing request](https://platform.hasanat
 │   ├── middleware.ts      # Auth verification
 │   ├── lib/
 │   │   ├── auth.ts        # Auth helpers
+│   │   ├── preview-auth.ts # Sign-in on Hasanat previews
 │   │   └── db.ts          # D1 database helpers
 │   ├── layouts/
 │   │   └── Layout.astro   # Base HTML layout

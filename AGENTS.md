@@ -41,6 +41,8 @@ const redirect = requireAuth(Astro.locals.user, Astro.url.href);
 if (redirect) return redirect;
 ```
 
+On Hasanat previews (`*.pages.dev` behind Cloudflare Access), `src/lib/preview-auth.ts` sets `Astro.locals.user` from the identity Access verified, with the id `preview:<email>`. Keep that check in `src/middleware.ts`; it does nothing outside previews. Never read the `Cf-Access-Jwt-Assertion` header yourself.
+
 ## Database Access
 
 ```typescript
